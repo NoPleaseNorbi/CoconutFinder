@@ -34,6 +34,8 @@
             Button_BFS = new Button();
             Timer_algorithm_tick = new System.Windows.Forms.Timer(components);
             ScrollBar_Algorithm_Speed = new HScrollBar();
+            Button_DFS = new Button();
+            Button_Random_maze_generator = new Button();
             ((System.ComponentModel.ISupportInitialize)Board).BeginInit();
             SuspendLayout();
             // 
@@ -50,7 +52,7 @@
             // 
             // Button_reset
             // 
-            Button_reset.Location = new Point(797, 47);
+            Button_reset.Location = new Point(797, 12);
             Button_reset.Name = "Button_reset";
             Button_reset.Size = new Size(112, 34);
             Button_reset.TabIndex = 1;
@@ -60,7 +62,7 @@
             // 
             // Button_BFS
             // 
-            Button_BFS.Location = new Point(797, 150);
+            Button_BFS.Location = new Point(797, 74);
             Button_BFS.Name = "Button_BFS";
             Button_BFS.Size = new Size(112, 34);
             Button_BFS.TabIndex = 2;
@@ -75,17 +77,39 @@
             // 
             // ScrollBar_Algorithm_Speed
             // 
-            ScrollBar_Algorithm_Speed.Location = new Point(702, 257);
+            ScrollBar_Algorithm_Speed.Location = new Point(704, 316);
             ScrollBar_Algorithm_Speed.Name = "ScrollBar_Algorithm_Speed";
             ScrollBar_Algorithm_Speed.Size = new Size(187, 46);
             ScrollBar_Algorithm_Speed.TabIndex = 3;
             ScrollBar_Algorithm_Speed.ValueChanged += ScrollBar_Algorithm_Speed_ValueChanged;
+            // 
+            // Button_DFS
+            // 
+            Button_DFS.Location = new Point(797, 123);
+            Button_DFS.Name = "Button_DFS";
+            Button_DFS.Size = new Size(112, 34);
+            Button_DFS.TabIndex = 4;
+            Button_DFS.Text = "DFS";
+            Button_DFS.UseVisualStyleBackColor = true;
+            Button_DFS.Click += Button_DFS_Click;
+            // 
+            // Button_Random_maze_generator
+            // 
+            Button_Random_maze_generator.Location = new Point(750, 201);
+            Button_Random_maze_generator.Name = "Button_Random_maze_generator";
+            Button_Random_maze_generator.Size = new Size(210, 34);
+            Button_Random_maze_generator.TabIndex = 6;
+            Button_Random_maze_generator.Text = "Generate Random Maze";
+            Button_Random_maze_generator.UseVisualStyleBackColor = true;
+            Button_Random_maze_generator.Click += Button_Random_maze_generator_Click;
             // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(10F, 25F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1034, 528);
+            Controls.Add(Button_Random_maze_generator);
+            Controls.Add(Button_DFS);
             Controls.Add(ScrollBar_Algorithm_Speed);
             Controls.Add(Button_BFS);
             Controls.Add(Button_reset);
@@ -104,5 +128,7 @@
         private Button Button_BFS;
         private System.Windows.Forms.Timer Timer_algorithm_tick;
         private HScrollBar ScrollBar_Algorithm_Speed;
+        private Button Button_DFS;
+        private Button Button_Random_maze_generator;
     }
 }

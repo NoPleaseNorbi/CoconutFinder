@@ -11,10 +11,18 @@ namespace Zapoctak
             Path_helper,
             Path
         }
+        private enum algorithm_picked
+        {
+            BFS,
+            DFS
+        }
         public const int squareSize = 25;
         public square_states[,] grid = new square_states[20, 20];
         private BFSAlgorithm bfsAlgorithm;
+        private DFSAlgorithm dfsAlgorithm;
+        private RandomMaze randomMaze;
         private int interval;
+        private algorithm_picked algorithm_picker;
         public Form1()
         {
             InitializeComponent();
@@ -95,15 +103,15 @@ namespace Zapoctak
                     }
                     else if (grid[row, col] == square_states.Obstacle)
                     {
-                        g.FillRectangle(Brushes.Red, col * squareSize, row * squareSize, squareSize, squareSize);
+                        g.FillRectangle(Brushes.Black, col * squareSize, row * squareSize, squareSize, squareSize);
                     }
                     else if (grid[row, col] == square_states.Path_helper)
                     {
-                        g.FillRectangle(Brushes.Yellow, col * squareSize, row * squareSize, squareSize, squareSize);
+                        g.FillRectangle(Brushes.Turquoise, col * squareSize, row * squareSize, squareSize, squareSize);
                     }
                     else if (grid[row, col] == square_states.Path)
                     {
-                        g.FillRectangle(Brushes.Black, col * squareSize, row * squareSize, squareSize, squareSize);
+                        g.FillRectangle(Brushes.Yellow, col * squareSize, row * squareSize, squareSize, squareSize);
                     }
                     else
                     {
@@ -136,26 +144,53 @@ namespace Zapoctak
         private void Button_BFS_Click(object sender, EventArgs e)
         {
             bfsAlgorithm = new BFSAlgorithm(this);
+            algorithm_picker = algorithm_picked.BFS;
             Timer_algorithm_tick.Start();
         }
 
         private void Timer_Algorithm_Tick_Tick(object sender, EventArgs e)
         {
-
-            bfsAlgorithm.RunBFS();
-            Board.Invalidate();
-
-            if (bfsAlgorithm.finished)
+            if (algorithm_picker == algorithm_picked.BFS)
             {
-                Timer_algorithm_tick.Stop();
-                bfsAlgorithm.TraceShortestPath();
-                MessageBox.Show("BFS algorithm finished!", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                bfsAlgorithm.RunBFS();
+                Board.Invalidate();
+                if (bfsAlgorithm.finished)
+                {
+                    Timer_algorithm_tick.Stop();
+                    bfsAlgorithm.TraceShortestPath();
+                    //MessageBox.Show("BFS algorithm finished!", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+            }
+            else if (algorithm_picker == algorithm_picked.DFS)
+            {
+                dfsAlgorithm.RunDFS();
+                Board.Invalidate();
+                if (dfsAlgorithm.finished)
+                {
+                    Timer_algorithm_tick.Stop();
+                    dfsAlgorithm.TraceShortestPath();
+                    //MessageBox.Show("DFS algorithm finished!", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
             }
         }
 
         private void ScrollBar_Algorithm_Speed_ValueChanged(object sender, EventArgs e)
         {
             Timer_algorithm_tick.Interval = (ScrollBar_Algorithm_Speed.Value + 1);
+        }
+
+        private void Button_DFS_Click(object sender, EventArgs e)
+        {
+            dfsAlgorithm = new DFSAlgorithm(this);
+            algorithm_picker = algorithm_picked.DFS;
+            Timer_algorithm_tick.Start();
+        }
+
+        private void Button_Random_maze_generator_Click(object sender, EventArgs e)
+        {
+            randomMaze = new RandomMaze(this);
+            randomMaze.GenerateRandomMaze();
+            Board.Invalidate();
         }
     }
 }
