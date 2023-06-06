@@ -1,5 +1,6 @@
 using Microsoft.VisualBasic;
 using System.Windows.Forms;
+using Zapoctak;
 
 namespace PathFinder
 {
@@ -15,12 +16,16 @@ namespace PathFinder
         private enum algorithm_picked
         {
             BFS,
-            DFS
+            DFS,
+            Dijkstra,
+            AStar
         }
         public const int squareSize = 25;
         public square_states[,] grid = new square_states[20, 20];
         private BFSAlgorithm bfsAlgorithm;
         private DFSAlgorithm dfsAlgorithm;
+        private DijkstraAlgorithm dijkstraAlgorithm;
+        private AStarAlgorithm aStarAlgorithm;
         private RandomMaze randomMaze;
         private algorithm_picked algorithm_picker;
         private int interval;
@@ -179,6 +184,35 @@ namespace PathFinder
                     //MessageBox.Show("DFS algorithm finished!", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
             }
+
+            else if (algorithm_picker == algorithm_picked.Dijkstra)
+            {
+                dijkstraAlgorithm.RunDijkstra();
+                Label_Information.Text = "Dijkstra algorithm running";
+                Board.Invalidate();
+                if (dijkstraAlgorithm.finished)
+                {
+                    Timer_algorithm_tick.Stop();
+                    Label_Information.Text = "Dijkstra algorithm finished";
+                    dijkstraAlgorithm.TraceShortestPath();
+                    //MessageBox.Show("Dijkstra algorithm finished!", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+            }
+
+            else if (algorithm_picker == algorithm_picked.AStar)
+            {
+                aStarAlgorithm.RunAStar();
+                Label_Information.Text = "A Star algorithm running";
+                Board.Invalidate();
+                if (aStarAlgorithm.finished)
+                {
+
+                    Timer_algorithm_tick.Stop();
+                    Label_Information.Text = "A Star algorithm finished";
+                    aStarAlgorithm.ReconstructPath();
+                    //MessageBox.Show("Bidirectional BFS algorithm finished!", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+            }
         }
 
         private void ScrollBar_Algorithm_Speed_ValueChanged(object sender, EventArgs e)
@@ -203,6 +237,20 @@ namespace PathFinder
         private void label1_Click(object sender, EventArgs e)
         {
 
+        }
+
+        private void Button_Dijkstra_Click(object sender, EventArgs e)
+        {
+            dijkstraAlgorithm = new DijkstraAlgorithm(this);
+            algorithm_picker = algorithm_picked.Dijkstra;
+            Timer_algorithm_tick.Start();
+        }
+
+        private void Button_AStar_Click(object sender, EventArgs e)
+        {
+            aStarAlgorithm = new AStarAlgorithm(this);
+            algorithm_picker = algorithm_picked.AStar;
+            Timer_algorithm_tick.Start();
         }
     }
 }

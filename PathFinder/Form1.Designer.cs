@@ -38,6 +38,8 @@
             ScrollBar_Algorithm_Speed = new HScrollBar();
             label1 = new Label();
             Label_Information = new Label();
+            Button_Dijkstra = new Button();
+            Button_A_Star = new Button();
             ((System.ComponentModel.ISupportInitialize)Board).BeginInit();
             SuspendLayout();
             // 
@@ -62,7 +64,7 @@
             Button_DFS.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             Button_DFS.AutoSizeMode = AutoSizeMode.GrowAndShrink;
             Button_DFS.Cursor = Cursors.Hand;
-            Button_DFS.Location = new Point(632, 121);
+            Button_DFS.Location = new Point(548, 131);
             Button_DFS.Name = "Button_DFS";
             Button_DFS.Size = new Size(169, 88);
             Button_DFS.TabIndex = 4;
@@ -75,7 +77,7 @@
             Button_BFS.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             Button_BFS.AutoSizeMode = AutoSizeMode.GrowAndShrink;
             Button_BFS.Cursor = Cursors.Hand;
-            Button_BFS.Location = new Point(632, 29);
+            Button_BFS.Location = new Point(548, 29);
             Button_BFS.Name = "Button_BFS";
             Button_BFS.Size = new Size(169, 86);
             Button_BFS.TabIndex = 2;
@@ -141,6 +143,32 @@
             Label_Information.TabIndex = 8;
             Label_Information.TextAlign = ContentAlignment.TopCenter;
             // 
+            // Button_Dijkstra
+            // 
+            Button_Dijkstra.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            Button_Dijkstra.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            Button_Dijkstra.Cursor = Cursors.Hand;
+            Button_Dijkstra.Location = new Point(726, 29);
+            Button_Dijkstra.Name = "Button_Dijkstra";
+            Button_Dijkstra.Size = new Size(169, 86);
+            Button_Dijkstra.TabIndex = 9;
+            Button_Dijkstra.Text = "Dijkstra";
+            Button_Dijkstra.UseVisualStyleBackColor = true;
+            Button_Dijkstra.Click += Button_Dijkstra_Click;
+            // 
+            // Button_A_Star
+            // 
+            Button_A_Star.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            Button_A_Star.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            Button_A_Star.Cursor = Cursors.Hand;
+            Button_A_Star.Location = new Point(726, 133);
+            Button_A_Star.Name = "Button_A_Star";
+            Button_A_Star.Size = new Size(169, 86);
+            Button_A_Star.TabIndex = 10;
+            Button_A_Star.Text = "A Star";
+            Button_A_Star.UseVisualStyleBackColor = true;
+            Button_A_Star.Click += Button_AStar_Click;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(10F, 25F);
@@ -148,6 +176,8 @@
             AutoSize = true;
             AutoSizeMode = AutoSizeMode.GrowAndShrink;
             ClientSize = new Size(924, 595);
+            Controls.Add(Button_A_Star);
+            Controls.Add(Button_Dijkstra);
             Controls.Add(Label_Information);
             Controls.Add(label1);
             Controls.Add(ScrollBar_Algorithm_Speed);
@@ -165,7 +195,7 @@
         }
 
         #endregion
-        private System.Windows.Forms.Timer Timer_algorithm_tick;
+        public System.Windows.Forms.Timer Timer_algorithm_tick;
         private Button Button_reset;
         private Button Button_DFS;
         private Button Button_BFS;
@@ -174,5 +204,7 @@
         private HScrollBar ScrollBar_Algorithm_Speed;
         private Label label1;
         public Label Label_Information;
+        private Button Button_Dijkstra;
+        private Button Button_A_Star;
     }
 }
