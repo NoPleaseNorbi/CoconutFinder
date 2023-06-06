@@ -1,4 +1,4 @@
-# CoconutFindere
+# CoconutFinder
 
 ## Project Overview
 

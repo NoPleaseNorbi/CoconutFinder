@@ -1,4 +1,4 @@
-﻿namespace Zapoctak
+﻿namespace PathFinder
 {
     partial class Form1
     {

@@ -1,4 +1,4 @@
-namespace Zapoctak
+namespace PathFinder
 {
     internal static class Program
     {

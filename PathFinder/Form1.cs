@@ -1,6 +1,6 @@
 using System.Windows.Forms;
 
-namespace Zapoctak
+namespace PathFinder
 {
     public partial class Form1 : Form
     {
