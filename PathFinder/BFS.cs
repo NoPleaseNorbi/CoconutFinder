@@ -76,8 +76,9 @@ namespace PathFinder
             int numRows = form.grid.GetLength(0);
             int numCols = form.grid.GetLength(1);
 
-            if (!visited[numRows - 1, numCols - 1]) { 
-                MessageBox.Show("Didn't find a path to end", "Error!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            if (!visited[numRows - 1, numCols - 1]) {
+                form.Label_Information.Text = "Didn't find a path to end";
+                //MessageBox.Show("Didn't find a path to end", "Error!", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 

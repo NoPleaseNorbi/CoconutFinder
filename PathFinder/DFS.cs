@@ -79,7 +79,8 @@ namespace PathFinder
 
             if (!visited[numRows - 1, numCols - 1])
             {
-                MessageBox.Show("Didn't find a path to end", "Error!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                form.Label_Information.Text = "Didn't find a path to end";
+                //MessageBox.Show("Didn't find a path to end", "Error!", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 

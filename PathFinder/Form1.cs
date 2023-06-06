@@ -1,3 +1,4 @@
+using Microsoft.VisualBasic;
 using System.Windows.Forms;
 
 namespace PathFinder
@@ -21,37 +22,42 @@ namespace PathFinder
         private BFSAlgorithm bfsAlgorithm;
         private DFSAlgorithm dfsAlgorithm;
         private RandomMaze randomMaze;
-        private int interval;
         private algorithm_picked algorithm_picker;
+        private int interval;
         public Form1()
         {
             InitializeComponent();
-            interval = 500; // Set the interval to 500 milliseconds (0.5 seconds)
-            Timer_algorithm_tick.Interval = interval;
         }
 
         private void Form1_Load(object sender, EventArgs e)
         {
-
+            interval = ScrollBar_Algorithm_Speed.Maximum;
+            Timer_algorithm_tick.Interval = interval - ScrollBar_Algorithm_Speed.Value + 1;
+            Label_Information.Text = "Welcome";
         }
 
         private void Board_MouseDown(object sender, MouseEventArgs e)
         {
             int row = e.Y / squareSize;
             int col = e.X / squareSize;
-
-            grid[row, col] = square_states.Obstacle;
+            if (e.Button == MouseButtons.Left)
+            {
+                grid[row, col] = square_states.Obstacle;
+            }
+            else if (e.Button == MouseButtons.Right)
+            {
+                grid[row, col] = square_states.Empty;
+            }
 
             Board.Invalidate();
         }
 
         private void Board_MouseMove(object sender, MouseEventArgs e)
         {
+            int row = e.Y / squareSize;
+            int col = e.X / squareSize;
             if (e.Button == MouseButtons.Left)
             {
-                int row = e.Y / squareSize;
-                int col = e.X / squareSize;
-
                 try
                 {
                     grid[row, col] = square_states.Obstacle;
@@ -65,9 +71,6 @@ namespace PathFinder
 
             if (e.Button == MouseButtons.Right)
             {
-                int row = e.Y / squareSize;
-                int col = e.X / squareSize;
-
                 try
                 {
                     if (grid[row, col] != square_states.Path)
@@ -153,10 +156,12 @@ namespace PathFinder
             if (algorithm_picker == algorithm_picked.BFS)
             {
                 bfsAlgorithm.RunBFS();
+                Label_Information.Text = "BFS algorithm running";
                 Board.Invalidate();
                 if (bfsAlgorithm.finished)
                 {
                     Timer_algorithm_tick.Stop();
+                    Label_Information.Text = "BFS algorithm finished";
                     bfsAlgorithm.TraceShortestPath();
                     //MessageBox.Show("BFS algorithm finished!", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
@@ -164,10 +169,12 @@ namespace PathFinder
             else if (algorithm_picker == algorithm_picked.DFS)
             {
                 dfsAlgorithm.RunDFS();
+                Label_Information.Text = "DFS algorithm running";
                 Board.Invalidate();
                 if (dfsAlgorithm.finished)
                 {
                     Timer_algorithm_tick.Stop();
+                    Label_Information.Text = "DFS algorithm finished";
                     dfsAlgorithm.TraceShortestPath();
                     //MessageBox.Show("DFS algorithm finished!", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
@@ -176,7 +183,7 @@ namespace PathFinder
 
         private void ScrollBar_Algorithm_Speed_ValueChanged(object sender, EventArgs e)
         {
-            Timer_algorithm_tick.Interval = (ScrollBar_Algorithm_Speed.Value + 1);
+            Timer_algorithm_tick.Interval = interval - (ScrollBar_Algorithm_Speed.Value - 1);
         }
 
         private void Button_DFS_Click(object sender, EventArgs e)
@@ -191,6 +198,11 @@ namespace PathFinder
             randomMaze = new RandomMaze(this);
             randomMaze.GenerateRandomMaze();
             Board.Invalidate();
+        }
+
+        private void label1_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
