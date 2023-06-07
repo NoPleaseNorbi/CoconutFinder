@@ -200,7 +200,7 @@ namespace PathFinder
                 Dijkstra_Algorithm.RunDijkstra();
                 Label_Information.Text = "Dijkstra algorithm running";
                 Board.Invalidate();
-                if (Dijkstra_Algorithm.finished)
+                if (Dijkstra_Algorithm.Finished())
                 {
                     Timer_algorithm_tick.Stop();
                     Label_Information.Text = "Dijkstra algorithm finished";
