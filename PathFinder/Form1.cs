@@ -40,6 +40,11 @@ namespace PathFinder
             grid = new square_states[grid_size, grid_size];
             start_point = new Point(0, 0);
             end_point = new Point(grid_size - 1, grid_size - 1);
+            BFS_Algorithm = new BFSAlgorithm(this);
+            DFS_Algorithm = new DFSAlgorithm(this);
+            Dijkstra_Algorithm = new DijkstraAlgorithm(this);
+            AStar_Algorithm = new AStarAlgorithm(this);
+            random_maze = new RandomMaze(this);
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -170,7 +175,7 @@ namespace PathFinder
                 BFS_Algorithm.RunBFS();
                 Label_Information.Text = "BFS algorithm running";
                 Board.Invalidate();
-                if (BFS_Algorithm.finished)
+                if (BFS_Algorithm.Finished())
                 {
                     Timer_algorithm_tick.Stop();
                     Label_Information.Text = "BFS algorithm finished";
