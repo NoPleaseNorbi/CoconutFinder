@@ -64,7 +64,7 @@ namespace PathFinder
             }
             else {
                 finished = true;
-                form.Label_Information.Text = "Didn't find a path to end";
+                form.Label_Information.Text = "A Star didn't find a path to end";
                 form.Timer_algorithm_tick.Stop();
                 return;
             }

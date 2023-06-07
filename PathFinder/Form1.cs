@@ -187,7 +187,7 @@ namespace PathFinder
                 DFS_Algorithm.RunDFS();
                 Label_Information.Text = "DFS algorithm running";
                 Board.Invalidate();
-                if (DFS_Algorithm.finished)
+                if (DFS_Algorithm.Finished())
                 {
                     Timer_algorithm_tick.Stop();
                     Label_Information.Text = "DFS algorithm finished";
