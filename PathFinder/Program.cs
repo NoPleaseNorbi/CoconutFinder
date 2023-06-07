@@ -1,5 +1,8 @@
 namespace PathFinder
 {
+    /// <summary>
+    /// The main Program class for our application
+    /// </summary>
     internal static class Program
     {
         /// <summary>

@@ -3,24 +3,44 @@ using System.Windows.Forms;
 
 namespace PathFinder
 {
+    /// <summary>
+    /// The main form for the PathFinder application.
+    /// </summary>
     public partial class Form1 : Form
     {
+        /// <summary>
+        /// Represents the possible states of a square on the grid.
+        /// </summary>
         public enum square_states
         {
-            Empty,
-            Obstacle,
-            Path_helper,
-            Path
+            Empty,       ///< The square is empty.
+            Obstacle,    ///< The square is an obstacle.
+            Path_helper, ///< The square is being searched trough using one of the algorithms.
+            Path         ///< The square is the path from the starting node to the finish node.
         }
+        /// <summary>
+        /// Represents the available algorithms for pathfinding.
+        /// </summary>
         private enum algorithm_picked
-        {
-            BFS,
-            DFS,
-            Dijkstra,
-            AStar
+        { 
+            BFS,      ///< Breadth First Search
+            DFS,      ///< Depth First Search
+            Dijkstra, ///< Dijkstra algorithm
+            AStar     ///< A star algorithm
         }
+        /// <summary>
+        /// The starting point for pathfinding.
+        /// </summary>
         public Point start_point;
+
+        /// <summary>
+        /// The ending point for pathfinding.
+        /// </summary>
         public Point end_point;
+
+        /// <summary>
+        /// The grid representing the state of each square.
+        /// </summary>
         public square_states[,] grid;
         
         private int square_size;
@@ -32,6 +52,10 @@ namespace PathFinder
         private RandomMaze random_maze;
         private algorithm_picked algorithm_picker;
         private int interval;
+
+        /// <summary>
+        /// The constructor of our form
+        /// </summary>
         public Form1()
         {
             InitializeComponent();
@@ -47,6 +71,9 @@ namespace PathFinder
             random_maze = new RandomMaze(this);
         }
 
+        /// <summary>
+        /// The loading of the form
+        /// </summary>
         private void Form1_Load(object sender, EventArgs e)
         {
             interval = ScrollBar_Algorithm_Speed.Maximum;
@@ -54,6 +81,11 @@ namespace PathFinder
             Label_Information.Text = "Welcome";
         }
 
+        /// <summary>
+        /// Dealing with mouse being pressed. If the user uses left mouse button,
+        /// the program adds and obstacle, if the right mouse button is used, 
+        /// then we delete an obstacle
+        /// </summary>
         private void Board_MouseDown(object sender, MouseEventArgs e)
         {
             int row = e.Y / square_size;
@@ -70,6 +102,10 @@ namespace PathFinder
             Board.Invalidate();
         }
 
+        /// <summary>
+        /// The same principlse apply here aswell as in the mouse down function, but here we trace 
+        /// the movement of the mouse
+        /// </summary>
         private void Board_MouseMove(object sender, MouseEventArgs e)
         {
             int row = e.Y / square_size;
@@ -83,6 +119,7 @@ namespace PathFinder
                 }
                 catch (Exception excp)
                 {
+                    /// <value>If we hold the mouse down and we move it outsite of our board, we show a warning</value>
                     MessageBox.Show(excp.Message, "Info", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 }
             }
@@ -104,6 +141,9 @@ namespace PathFinder
             }
         }
 
+        /// <summary>
+        /// In this function we paint our board.
+        /// </summary>
         private void Board_Paint(object sender, PaintEventArgs e)
         {
             Graphics g = e.Graphics;
@@ -114,11 +154,11 @@ namespace PathFinder
                 {
                     int square_x = col * square_size;
                     int square_y = row * square_size;
-                    if (row == start_point.X && col == start_point.Y)
+                    if (row == start_point.Y && col == start_point.X)
                     {
                         g.FillRectangle(Brushes.Green, square_x, square_y, square_size, square_size);
                     }
-                    else if (row == end_point.X && col == end_point.Y)
+                    else if (row == end_point.Y && col == end_point.X)
                     {
                         g.FillRectangle(Brushes.Blue, square_x, square_y, square_size, square_size);
                     }
@@ -138,12 +178,15 @@ namespace PathFinder
                     {
                         g.FillRectangle(Brushes.White, col * square_size, row * square_size, square_size, square_size);
                     }
-                    g.DrawRectangle(Pens.Black, square_x, square_y, square_size, square_size);
+                    g.DrawRectangle(Pens.Black, square_x, square_y, square_size, square_size); // Here we paint the edges of our squares
                 }
             }
         }
 
-        private void reset_board()
+        /// <summary>
+        /// This function resets the board, and paints every square white
+        /// </summary>
+        private void Reset_Board()
         {
             for (int row = 0; row < grid.GetLength(0); row++)
             {
@@ -155,12 +198,18 @@ namespace PathFinder
             Board.Invalidate();
         }
 
+        /// <summary>
+        /// If the reset button is clicked, it calls the <see cref="Reset_Board">
+        /// </summary>
         private void Button_reset_Click(object sender, EventArgs e)
         {
-            reset_board();
+            Reset_Board();
             Timer_algorithm_tick.Stop();
         }
 
+        /// <summary>
+        /// Calls the BFS algorithm if the "BFS" button is clicked
+        /// </summary>
         private void Button_BFS_Click(object sender, EventArgs e)
         {
             BFS_Algorithm = new BFSAlgorithm(this);
@@ -168,6 +217,11 @@ namespace PathFinder
             Timer_algorithm_tick.Start();
         }
 
+        /// <summary>
+        /// This class uses the <see cref="algorithm_picked"/> enumerator to determine
+        /// which algorithm has been called and according to it updates the <see cref="Label_Information">
+        /// Using the <see cref="ScrollBar_Algorithm_Speed"> it animates the algorithms 
+        /// </summary>
         private void Timer_Algorithm_Tick_Tick(object sender, EventArgs e)
         {
             if (algorithm_picker == algorithm_picked.BFS)
@@ -223,11 +277,18 @@ namespace PathFinder
             }
         }
 
+        /// <summary>
+        /// If the value of the <see cref="ScrollBar_Algorithm_Speed"/> is changed,
+        /// we change the <see cref="Timer_algorithm_tick"/> interval
+        /// </summary>
         private void ScrollBar_Algorithm_Speed_ValueChanged(object sender, EventArgs e)
         {
             Timer_algorithm_tick.Interval = interval - (ScrollBar_Algorithm_Speed.Value - 1);
         }
 
+        /// <summary>
+        /// Calls the DFS algorithm if the "DFS" button is clicked
+        /// </summary>
         private void Button_DFS_Click(object sender, EventArgs e)
         {
             DFS_Algorithm = new DFSAlgorithm(this);
@@ -235,6 +296,9 @@ namespace PathFinder
             Timer_algorithm_tick.Start();
         }
 
+        /// <summary>
+        /// We generate a random maze
+        /// </summary>
         private void Button_Random_maze_generator_Click(object sender, EventArgs e)
         {
             random_maze = new RandomMaze(this);
@@ -242,6 +306,9 @@ namespace PathFinder
             Board.Invalidate();
         }
 
+        /// <summary>
+        /// Calls the Dijsktra algorithm if the "Dijkstra" button is clicked
+        /// </summary>
         private void Button_Dijkstra_Click(object sender, EventArgs e)
         {
             Dijkstra_Algorithm = new DijkstraAlgorithm(this);
@@ -249,6 +316,9 @@ namespace PathFinder
             Timer_algorithm_tick.Start();
         }
 
+        /// <summary>
+        /// Calls the AStar algorithm if the "A Star" button is clicked
+        /// </summary>
         private void Button_AStar_Click(object sender, EventArgs e)
         {
             AStar_Algorithm = new AStarAlgorithm(this);

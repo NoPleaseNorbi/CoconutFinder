@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace PathFinder
 {
+    /// <summary>
+    /// The main class of our maze builder
+    /// </summary>
     public class RandomMaze
     {
         private int rows_number;
@@ -14,6 +17,11 @@ namespace PathFinder
         private Form1 form;
         private Point starting_point;
         private Point ending_point;
+
+        /// <summary>
+        /// The constructor of the RandomMaze class
+        /// </summary>
+        /// <param name="form">The main form of our application</param>
         public RandomMaze(Form1 form)
         {
             this.form = form;
@@ -24,6 +32,9 @@ namespace PathFinder
             ending_point = form.end_point;
         }
 
+        /// <summary>
+        /// Generating our random maze
+        /// </summary>
         public void GenerateRandomMaze() 
         { 
             for (int i = 0; i < rows_number; i++)

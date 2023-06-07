@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 
 namespace PathFinder
 {
+    /// <summary>
+    /// The main class for the Dijkstra algorithm.
+    /// </summary>
     public class DijkstraAlgorithm
     {
         private Form1 form;
@@ -17,6 +20,11 @@ namespace PathFinder
         private bool finished;
         private Point starting_point;
         private Point ending_point;
+
+        /// <summary>
+        /// The constructor of the Dijkstra algorithm class
+        /// </summary>
+        /// <param name="form">The main form of our application</param>
         public DijkstraAlgorithm(Form1 form)
         {
             this.form = form;
@@ -37,11 +45,20 @@ namespace PathFinder
             distances[starting_point.Y, starting_point.X] = 0;
         }
 
+        /// <summary>
+        /// Function for determining if the algorithm has already finished
+        /// </summary>
+        /// <returns>Returns true if the algorithm finished</returns>
         public bool Finished() 
         {
             return finished;
         }
 
+        /// <summary>
+        /// The main function for the Dijkstra algorithm, it uses if and not while,
+        /// because we don't want the application to run the whole algorithm in one tick
+        /// of our timer.
+        /// </summary>
         public void RunDijkstra() 
         {
             int minimal_distance = int.MaxValue;
@@ -88,6 +105,9 @@ namespace PathFinder
             }
         }
 
+        // <summary>
+        /// The reconstruction of our path from start to the finish
+        /// </summary>
         public void TraceShortestPath()
         {
             if (distances[rows_number - 1, cols_number - 1] == int.MaxValue)

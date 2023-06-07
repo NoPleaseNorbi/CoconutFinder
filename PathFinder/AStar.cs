@@ -5,6 +5,9 @@ using System.Windows.Forms;
 
 namespace PathFinder
 {
+    /// <summary>
+    /// The main class for the A star algorithm.
+    /// </summary>
     public class AStarAlgorithm
     {
         private Form1 form;
@@ -19,6 +22,10 @@ namespace PathFinder
         private Point starting_point;
         private Point ending_point;
 
+        /// <summary>
+        /// The constructor of the A star algorithm class
+        /// </summary>
+        /// <param name="form">The main form of our application</param>
         public AStarAlgorithm(Form1 form)
         {
             this.form = form;
@@ -46,6 +53,11 @@ namespace PathFinder
             open_set.Enqueue(new Point(starting_point.X, starting_point.Y), 0);
         }
 
+        /// <summary>
+        /// The main function for the A star algorithm, it uses if and not while,
+        /// because we don't want the application to run the whole algorithm in one tick
+        /// of our timer.
+        /// </summary>
         public void RunAStar()
         {
             if (open_set.Count > 0)
@@ -70,6 +82,11 @@ namespace PathFinder
             }
         }
 
+        /// <summary>
+        /// We explore the neighbours of our current_cell, meaning we explore the squares,
+        /// which are next to our current_cell
+        /// </summary>
+        /// <param name="current_cell">The current cell, for what we need the neighbours</param>
         private void ExploreNeighbors(Point current_cell)
         {
             int[] dx = { -1, 0, 1, 0 };
@@ -102,6 +119,9 @@ namespace PathFinder
             form.Board.Invalidate();
         }
 
+        /// <summary>
+        /// Reconstruction of the path.
+        /// </summary>
         public void ReconstructPath()
         {
             int curr_row = rows_number - 1;
@@ -120,6 +140,11 @@ namespace PathFinder
             form.Board.Invalidate();
         }
 
+        /// <summary>
+        /// Calculates the estimated distance of our current cell
+        /// </summary>
+        /// <param name="cell">The cell for what we need the distance</param>
+        /// <returns>The distance</returns>
         private int CalculateHeuristic(Point cell)
         {
             int dx = Math.Abs(cell.X - (cols_number - 1));
@@ -127,6 +152,10 @@ namespace PathFinder
             return dx + dy;
         }
 
+        /// <summary>
+        /// Function for determining if the algorithm hsa already finished
+        /// </summary>
+        /// <returns>Returns true if the algorithm finished</returns>
         public bool Finished() {
             return finished;
         }

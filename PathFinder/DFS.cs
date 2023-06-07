@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace PathFinder
 {
+    /// <summary>
+    /// The main class for the DFS algorithm.
+    /// </summary>
     public class DFSAlgorithm
     {
         private Form1 form;
@@ -18,6 +21,10 @@ namespace PathFinder
         private Point starting_point;
         private Point ending_point;
 
+        /// <summary>
+        /// The constructor of the DFS algorithm class
+        /// </summary>
+        /// <param name="form">The main form of our application</param>
         public DFSAlgorithm(Form1 form)
         {
             this.form = form;
@@ -42,11 +49,20 @@ namespace PathFinder
             stack.Push(new Point(starting_point.Y, starting_point.X));
         }
 
+        /// <summary>
+        /// Function for determining if the algorithm has already finished
+        /// </summary>
+        /// <returns>Returns true if the algorithm finished</returns>
         public bool Finished() 
         {
             return finished;
         }
 
+        /// <summary>
+        /// The main function for the DFS algorithm, it uses if and not while,
+        /// because we don't want the application to run the whole algorithm in one tick
+        /// of our timer.
+        /// </summary>
         public void RunDFS()
         {
             int[] dx = { -1, 0, 1, 0 };
@@ -80,6 +96,9 @@ namespace PathFinder
         }
 
 
+        /// <summary>
+        /// The reconstruction of our path from start to the finish
+        /// </summary>
         public void TraceShortestPath()
         {
             if (!visited[ending_point.Y, ending_point.X])
