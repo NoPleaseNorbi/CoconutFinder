@@ -130,7 +130,6 @@
             label1.TabIndex = 7;
             label1.Text = "Change the speed of the visualization";
             label1.TextAlign = ContentAlignment.TopCenter;
-            label1.Click += label1_Click;
             // 
             // Label_Information
             // 

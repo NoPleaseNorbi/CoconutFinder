@@ -1,6 +1,5 @@
 using Microsoft.VisualBasic;
 using System.Windows.Forms;
-using Zapoctak;
 
 namespace PathFinder
 {
@@ -20,18 +19,27 @@ namespace PathFinder
             Dijkstra,
             AStar
         }
-        public const int squareSize = 25;
-        public square_states[,] grid = new square_states[20, 20];
-        private BFSAlgorithm bfsAlgorithm;
-        private DFSAlgorithm dfsAlgorithm;
-        private DijkstraAlgorithm dijkstraAlgorithm;
-        private AStarAlgorithm aStarAlgorithm;
-        private RandomMaze randomMaze;
+        public Point start_point;
+        public Point end_point;
+        public square_states[,] grid;
+        
+        private int square_size;
+        private int grid_size;
+        private BFSAlgorithm BFS_Algorithm;
+        private DFSAlgorithm DFS_Algorithm;
+        private DijkstraAlgorithm Dijkstra_Algorithm;
+        private AStarAlgorithm AStar_Algorithm;
+        private RandomMaze random_maze;
         private algorithm_picked algorithm_picker;
         private int interval;
         public Form1()
         {
             InitializeComponent();
+            square_size = 25;
+            grid_size = Board.Width / square_size;
+            grid = new square_states[grid_size, grid_size];
+            start_point = new Point(0, 0);
+            end_point = new Point(grid_size - 1, grid_size - 1);
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -43,8 +51,8 @@ namespace PathFinder
 
         private void Board_MouseDown(object sender, MouseEventArgs e)
         {
-            int row = e.Y / squareSize;
-            int col = e.X / squareSize;
+            int row = e.Y / square_size;
+            int col = e.X / square_size;
             if (e.Button == MouseButtons.Left)
             {
                 grid[row, col] = square_states.Obstacle;
@@ -59,8 +67,8 @@ namespace PathFinder
 
         private void Board_MouseMove(object sender, MouseEventArgs e)
         {
-            int row = e.Y / squareSize;
-            int col = e.X / squareSize;
+            int row = e.Y / square_size;
+            int col = e.X / square_size;
             if (e.Button == MouseButtons.Left)
             {
                 try
@@ -70,7 +78,7 @@ namespace PathFinder
                 }
                 catch (Exception excp)
                 {
-                    Console.Write(excp);
+                    MessageBox.Show(excp.Message, "Info", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 }
             }
 
@@ -86,7 +94,7 @@ namespace PathFinder
                 }
                 catch (Exception excp)
                 {
-                    Console.Write(excp);
+                    MessageBox.Show(excp.Message, "Info", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 }
             }
         }
@@ -99,33 +107,33 @@ namespace PathFinder
             {
                 for (int col = 0; col < grid.GetLength(1); col++)
                 {
-                    int squareX = col * squareSize;
-                    int squareY = row * squareSize;
-                    if (row == 0 && col == 0)
+                    int square_x = col * square_size;
+                    int square_y = row * square_size;
+                    if (row == start_point.X && col == start_point.Y)
                     {
-                        g.FillRectangle(Brushes.Green, squareX, squareY, squareSize, squareSize);
+                        g.FillRectangle(Brushes.Green, square_x, square_y, square_size, square_size);
                     }
-                    else if (row == grid.GetLength(0) - 1 && col == grid.GetLength(1) - 1)
+                    else if (row == end_point.X && col == end_point.Y)
                     {
-                        g.FillRectangle(Brushes.Blue, squareX, squareY, squareSize, squareSize);
+                        g.FillRectangle(Brushes.Blue, square_x, square_y, square_size, square_size);
                     }
                     else if (grid[row, col] == square_states.Obstacle)
                     {
-                        g.FillRectangle(Brushes.Black, col * squareSize, row * squareSize, squareSize, squareSize);
+                        g.FillRectangle(Brushes.Black, col * square_size, row * square_size, square_size, square_size);
                     }
                     else if (grid[row, col] == square_states.Path_helper)
                     {
-                        g.FillRectangle(Brushes.Turquoise, col * squareSize, row * squareSize, squareSize, squareSize);
+                        g.FillRectangle(Brushes.Turquoise, col * square_size, row * square_size, square_size, square_size);
                     }
                     else if (grid[row, col] == square_states.Path)
                     {
-                        g.FillRectangle(Brushes.Yellow, col * squareSize, row * squareSize, squareSize, squareSize);
+                        g.FillRectangle(Brushes.Yellow, col * square_size, row * square_size, square_size, square_size);
                     }
                     else
                     {
-                        g.FillRectangle(Brushes.White, col * squareSize, row * squareSize, squareSize, squareSize);
+                        g.FillRectangle(Brushes.White, col * square_size, row * square_size, square_size, square_size);
                     }
-                    g.DrawRectangle(Pens.Black, squareX, squareY, squareSize, squareSize);
+                    g.DrawRectangle(Pens.Black, square_x, square_y, square_size, square_size);
                 }
             }
         }
@@ -141,17 +149,16 @@ namespace PathFinder
             }
             Board.Invalidate();
         }
+
         private void Button_reset_Click(object sender, EventArgs e)
         {
             reset_board();
             Timer_algorithm_tick.Stop();
         }
 
-
-
         private void Button_BFS_Click(object sender, EventArgs e)
         {
-            bfsAlgorithm = new BFSAlgorithm(this);
+            BFS_Algorithm = new BFSAlgorithm(this);
             algorithm_picker = algorithm_picked.BFS;
             Timer_algorithm_tick.Start();
         }
@@ -160,58 +167,54 @@ namespace PathFinder
         {
             if (algorithm_picker == algorithm_picked.BFS)
             {
-                bfsAlgorithm.RunBFS();
+                BFS_Algorithm.RunBFS();
                 Label_Information.Text = "BFS algorithm running";
                 Board.Invalidate();
-                if (bfsAlgorithm.finished)
+                if (BFS_Algorithm.finished)
                 {
                     Timer_algorithm_tick.Stop();
                     Label_Information.Text = "BFS algorithm finished";
-                    bfsAlgorithm.TraceShortestPath();
-                    //MessageBox.Show("BFS algorithm finished!", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    BFS_Algorithm.TraceShortestPath();
                 }
             }
             else if (algorithm_picker == algorithm_picked.DFS)
             {
-                dfsAlgorithm.RunDFS();
+                DFS_Algorithm.RunDFS();
                 Label_Information.Text = "DFS algorithm running";
                 Board.Invalidate();
-                if (dfsAlgorithm.finished)
+                if (DFS_Algorithm.finished)
                 {
                     Timer_algorithm_tick.Stop();
                     Label_Information.Text = "DFS algorithm finished";
-                    dfsAlgorithm.TraceShortestPath();
-                    //MessageBox.Show("DFS algorithm finished!", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    DFS_Algorithm.TraceShortestPath();
                 }
             }
 
             else if (algorithm_picker == algorithm_picked.Dijkstra)
             {
-                dijkstraAlgorithm.RunDijkstra();
+                Dijkstra_Algorithm.RunDijkstra();
                 Label_Information.Text = "Dijkstra algorithm running";
                 Board.Invalidate();
-                if (dijkstraAlgorithm.finished)
+                if (Dijkstra_Algorithm.finished)
                 {
                     Timer_algorithm_tick.Stop();
                     Label_Information.Text = "Dijkstra algorithm finished";
-                    dijkstraAlgorithm.TraceShortestPath();
-                    //MessageBox.Show("Dijkstra algorithm finished!", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    Dijkstra_Algorithm.TraceShortestPath();
                 }
             }
 
             else if (algorithm_picker == algorithm_picked.AStar)
             {
-                aStarAlgorithm.RunAStar();
-                Label_Information.Text = "A Star algorithm running";
-                Board.Invalidate();
-                if (aStarAlgorithm.finished)
+                if (AStar_Algorithm.Finished())
                 {
-
                     Timer_algorithm_tick.Stop();
                     Label_Information.Text = "A Star algorithm finished";
-                    aStarAlgorithm.ReconstructPath();
-                    //MessageBox.Show("Bidirectional BFS algorithm finished!", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    AStar_Algorithm.ReconstructPath();
                 }
+                AStar_Algorithm.RunAStar();
+                if (!AStar_Algorithm.Finished())
+                    Label_Information.Text = "A Star algorithm running";
+                Board.Invalidate();
             }
         }
 
@@ -222,33 +225,28 @@ namespace PathFinder
 
         private void Button_DFS_Click(object sender, EventArgs e)
         {
-            dfsAlgorithm = new DFSAlgorithm(this);
+            DFS_Algorithm = new DFSAlgorithm(this);
             algorithm_picker = algorithm_picked.DFS;
             Timer_algorithm_tick.Start();
         }
 
         private void Button_Random_maze_generator_Click(object sender, EventArgs e)
         {
-            randomMaze = new RandomMaze(this);
-            randomMaze.GenerateRandomMaze();
+            random_maze = new RandomMaze(this);
+            random_maze.GenerateRandomMaze();
             Board.Invalidate();
-        }
-
-        private void label1_Click(object sender, EventArgs e)
-        {
-
         }
 
         private void Button_Dijkstra_Click(object sender, EventArgs e)
         {
-            dijkstraAlgorithm = new DijkstraAlgorithm(this);
+            Dijkstra_Algorithm = new DijkstraAlgorithm(this);
             algorithm_picker = algorithm_picked.Dijkstra;
             Timer_algorithm_tick.Start();
         }
 
         private void Button_AStar_Click(object sender, EventArgs e)
         {
-            aStarAlgorithm = new AStarAlgorithm(this);
+            AStar_Algorithm = new AStarAlgorithm(this);
             algorithm_picker = algorithm_picked.AStar;
             Timer_algorithm_tick.Start();
         }
