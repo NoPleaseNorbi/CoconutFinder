@@ -25,7 +25,7 @@ namespace PathFinder
         { 
             BFS,      ///< Breadth First Search
             DFS,      ///< Depth First Search
-            Dijkstra, ///< Dijkstra algorithm
+            Dijkstra, ///< Dijkstra's algorithm
             AStar     ///< A star algorithm
         }
         /// <summary>
@@ -43,13 +43,44 @@ namespace PathFinder
         /// </summary>
         public square_states[,] grid;
         
+        /// <summary>
+        /// The size of our square
+        /// </summary>
         private int square_size;
+
+        /// <summary>
+        /// The size of the grid, in this case the width of <see cref="Board"/>
+        /// </summary>
         private int grid_size;
+
+        /// <summary>
+        /// The class for our BFS algorithm
+        /// </summary>
         private BFSAlgorithm BFS_Algorithm;
+
+        /// <summary>
+        /// The class for our DFS algorithm
+        /// </summary>
         private DFSAlgorithm DFS_Algorithm;
+
+        /// <summary>
+        /// The class for our Dijkstra's algorithm
+        /// </summary>
         private DijkstraAlgorithm Dijkstra_Algorithm;
+
+        /// <summary>
+        /// The class for our A star algorithm
+        /// </summary>
         private AStarAlgorithm AStar_Algorithm;
+
+        /// <summary>
+        /// The class for our random maze generator algorithm
+        /// </summary>
         private RandomMaze random_maze;
+
+        /// <summary>
+        /// Indicates which algorithm is currently picked
+        /// </summary>
         private algorithm_picked algorithm_picker;
         private int interval;
 
@@ -82,7 +113,7 @@ namespace PathFinder
         }
 
         /// <summary>
-        /// Dealing with mouse being pressed. If the user uses left mouse button,
+        /// Dealing with mouse being pressed. If the user presses left mouse button,
         /// the program adds and obstacle, if the right mouse button is used, 
         /// then we delete an obstacle
         /// </summary>
@@ -103,7 +134,7 @@ namespace PathFinder
         }
 
         /// <summary>
-        /// The same principlse apply here aswell as in the mouse down function, but here we trace 
+        /// The same principle applies here aswell as in the mouse down function, but here we trace 
         /// the movement of the mouse
         /// </summary>
         private void Board_MouseMove(object sender, MouseEventArgs e)
@@ -119,7 +150,7 @@ namespace PathFinder
                 }
                 catch (Exception excp)
                 {
-                    /// <value>If we hold the mouse down and we move it outsite of our board, we show a warning</value>
+                    //If we hold the mouse down and we move it outsite of our board, we show a warning</value>
                     MessageBox.Show(excp.Message, "Info", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 }
             }
@@ -142,7 +173,7 @@ namespace PathFinder
         }
 
         /// <summary>
-        /// In this function we paint our board.
+        /// In this function we paint our board. The manual explains the colours of the squares.
         /// </summary>
         private void Board_Paint(object sender, PaintEventArgs e)
         {
@@ -297,7 +328,7 @@ namespace PathFinder
         }
 
         /// <summary>
-        /// We generate a random maze
+        /// This function calls our maze generator class, to generate a random maze.
         /// </summary>
         private void Button_Random_maze_generator_Click(object sender, EventArgs e)
         {
@@ -308,7 +339,7 @@ namespace PathFinder
         }
 
         /// <summary>
-        /// Calls the Dijsktra algorithm if the "Dijkstra" button is clicked
+        /// Calls the Dijsktra's algorithm if the "Dijkstra" button is clicked
         /// </summary>
         private void Button_Dijkstra_Click(object sender, EventArgs e)
         {

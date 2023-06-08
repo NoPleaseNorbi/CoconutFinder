@@ -10,6 +10,9 @@ namespace PathFinder
     /// </summary>
     public class AStarAlgorithm
     {
+        /// <summary>
+        /// The main form of our application
+        /// </summary>
         private Form1 form;
         private int rows_number;
         private int cols_number;

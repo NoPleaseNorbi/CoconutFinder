@@ -51,7 +51,7 @@ namespace PathFinder
         /// <summary>
         /// Function for determining if the algorithm has already finished
         /// </summary>
-        /// <returns>Returns true if the algorithm finished</returns>
+        /// <returns>Returns true if the algorithm has finished</returns>
         public bool Finished() {
             return finished;
         }

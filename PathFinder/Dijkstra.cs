@@ -22,7 +22,7 @@ namespace PathFinder
         private Point ending_point;
 
         /// <summary>
-        /// The constructor of the Dijkstra algorithm class
+        /// The constructor of the Dijkstra's algorithm class
         /// </summary>
         /// <param name="form">The main form of our application</param>
         public DijkstraAlgorithm(Form1 form)
@@ -48,14 +48,14 @@ namespace PathFinder
         /// <summary>
         /// Function for determining if the algorithm has already finished
         /// </summary>
-        /// <returns>Returns true if the algorithm finished</returns>
+        /// <returns>Returns true if the algorithm has finished</returns>
         public bool Finished() 
         {
             return finished;
         }
 
         /// <summary>
-        /// The main function for the Dijkstra algorithm, it uses if and not while,
+        /// The main function for the Dijkstra's algorithm, it uses if and not while,
         /// because we don't want the application to run the whole algorithm in one tick
         /// of our timer.
         /// </summary>
