@@ -301,6 +301,7 @@ namespace PathFinder
         /// </summary>
         private void Button_Random_maze_generator_Click(object sender, EventArgs e)
         {
+            Timer_algorithm_tick.Stop();
             random_maze = new RandomMaze(this);
             random_maze.GenerateRandomMaze();
             Board.Invalidate();
