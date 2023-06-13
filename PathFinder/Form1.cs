@@ -22,7 +22,7 @@ namespace PathFinder
         /// Represents the available algorithms for pathfinding.
         /// </summary>
         private enum algorithm_picked
-        { 
+        {
             BFS,      ///< Breadth First Search
             DFS,      ///< Depth First Search
             Dijkstra, ///< Dijkstra's algorithm
@@ -42,7 +42,7 @@ namespace PathFinder
         /// The grid representing the state of each square.
         /// </summary>
         public square_states[,] grid;
-        
+
         /// <summary>
         /// The size of our square
         /// </summary>
