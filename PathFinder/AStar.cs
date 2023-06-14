@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
+using System.Xml.Linq;
 
 namespace PathFinder
 {
@@ -162,5 +163,88 @@ namespace PathFinder
         public bool Finished() {
             return finished;
         }
+
+        public List<Node> AStar_for_weighted(Node startNode, Node endNode, List<Node> nodes)
+        {
+            Dictionary<Node, int> distances = new Dictionary<Node, int>();
+            Dictionary<Node, Node> previousNodes = new Dictionary<Node, Node>();
+            HashSet<Node> visitedNodes = new HashSet<Node>();
+            HashSet<Node> unvisitedNodes = new HashSet<Node>(nodes);
+
+            foreach (Node node in unvisitedNodes)
+            {
+                distances[node] = int.MaxValue;
+            }
+
+            distances[startNode] = 0;
+
+            while (unvisitedNodes.Count > 0)
+            {
+                Node currentNode = GetClosestNode_for_weighted(distances, unvisitedNodes);
+
+                if (currentNode == endNode)
+                {
+                    break;
+                }
+
+                unvisitedNodes.Remove(currentNode);
+                visitedNodes.Add(currentNode);
+
+                if (currentNode.Edges.Count == 0) 
+                {
+                    break;                
+                }
+                foreach (Edge edge in currentNode.Edges)
+                {
+                    Node neighborNode = edge.Target;
+
+                    if (visitedNodes.Contains(neighborNode))
+                    {
+                        continue;
+                    }
+
+                    int distance = distances[currentNode] + edge.Weight;
+
+                    if (distance < distances[neighborNode])
+                    {
+                        distances[neighborNode] = distance;
+                        previousNodes[neighborNode] = currentNode;
+                    }
+                }
+            }
+
+            List<Node> shortestPath = new List<Node>();
+            Node backtrackNode = endNode;
+
+            while (backtrackNode != null)
+            {
+                shortestPath.Insert(0, backtrackNode);
+                backtrackNode = previousNodes.ContainsKey(backtrackNode) ? previousNodes[backtrackNode] : null;
+            }
+
+            if (shortestPath.Count == 1)
+            {
+                MessageBox.Show("Didn't find a path", "Invalid Nodes", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+            return shortestPath;
+        }
+
+        private Node GetClosestNode_for_weighted(Dictionary<Node, int> distances, HashSet<Node> unvisitedNodes)
+        {
+            int minDistance = int.MaxValue;
+            Node closestNode = null;
+
+            foreach (Node node in unvisitedNodes)
+            {
+                if (distances[node] < minDistance)
+                {
+                    minDistance = distances[node];
+                    closestNode = node;
+                }
+            }
+
+            return closestNode;
+        }
+
     }
 }

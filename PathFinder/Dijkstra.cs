@@ -151,5 +151,57 @@ namespace PathFinder
 
             form.Board.Invalidate();
         }
+
+        public List<Node> Dijkstra_for_weighted(Node startNode, Node endNode, List<Node> nodes)
+        {
+            Dictionary<Node, int> distances = new Dictionary<Node, int>();
+            Dictionary<Node, Node> previousNodes = new Dictionary<Node, Node>();
+            List<Node> unvisitedNodes = new List<Node>(nodes);
+
+            foreach (Node node in unvisitedNodes)
+            {
+                distances[node] = int.MaxValue;
+            }
+
+            distances[startNode] = 0;
+
+            while (unvisitedNodes.Count > 0)
+            {
+                Node currentNode = unvisitedNodes.OrderBy(node => distances[node]).First();
+
+                if (currentNode == endNode)
+                {
+                    break;
+                }
+
+                unvisitedNodes.Remove(currentNode);
+
+                foreach (Edge edge in currentNode.Edges)
+                {
+                    int distance = distances[currentNode] + edge.Weight;
+
+                    if (distance < distances[edge.Target])
+                    {
+                        distances[edge.Target] = distance;
+                        previousNodes[edge.Target] = currentNode;
+                    }
+                }
+            }
+
+            List<Node> shortestPath = new List<Node>();
+            Node backtrackNode = endNode;
+
+            while (backtrackNode != null)
+            {
+                shortestPath.Insert(0, backtrackNode);
+                backtrackNode = previousNodes.ContainsKey(backtrackNode) ? previousNodes[backtrackNode] : null;
+            }
+
+            if (shortestPath.Count == 1)
+            {
+                MessageBox.Show("Didn't find a path", "Invalid Nodes", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+            return shortestPath;
+        }
     }
 }

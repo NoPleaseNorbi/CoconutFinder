@@ -135,5 +135,54 @@ namespace PathFinder
             }
             form.Board.Invalidate();
         }
+
+        public List<Node> BFS_for_weighted(Node startNode, Node endNode)
+        {
+            Dictionary<Node, Node> previousNodes = new Dictionary<Node, Node>();
+            Queue<Node> queue = new Queue<Node>();
+            HashSet<Node> visitedNodes = new HashSet<Node>();
+
+            queue.Enqueue(startNode);
+            visitedNodes.Add(startNode);
+
+            while (queue.Count > 0)
+            {
+                Node currentNode = queue.Dequeue();
+
+                if (currentNode == endNode)
+                {
+                    break;
+                }
+
+                foreach (Edge edge in currentNode.Edges)
+                {
+                    Node neighborNode = edge.Target;
+
+                    if (!visitedNodes.Contains(neighborNode))
+                    {
+                        queue.Enqueue(neighborNode);
+                        visitedNodes.Add(neighborNode);
+                        previousNodes[neighborNode] = currentNode;
+                    }
+                    
+                }
+            }
+
+            List<Node> shortestPath = new List<Node>();
+            Node backtrackNode = endNode;
+
+            while (backtrackNode != null)
+            {
+                shortestPath.Insert(0, backtrackNode);
+                backtrackNode = previousNodes.ContainsKey(backtrackNode) ? previousNodes[backtrackNode] : null;
+            }
+
+            if (shortestPath.Count == 1) 
+            {
+                MessageBox.Show("Didn't find a path", "Invalid Nodes", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+            return shortestPath;
+        }
+
     }
 }

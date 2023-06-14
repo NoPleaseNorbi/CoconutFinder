@@ -1,5 +1,7 @@
 using Microsoft.VisualBasic;
 using System.Windows.Forms;
+using System.Windows.Forms.VisualStyles;
+using System.Xml.Linq;
 
 namespace PathFinder
 {
@@ -83,13 +85,17 @@ namespace PathFinder
         /// </summary>
         private algorithm_picked algorithm_picker;
         private int interval;
-
+        private int current_number;
+        private List<Node> nodes = new List<Node>();
+        public bool weighted_graph_selected;
+        private List<Node> weighted_graph_path = new List<Node>();
         /// <summary>
         /// The constructor of our form
         /// </summary>
         public Form1()
         {
             InitializeComponent();
+            weighted_graph_selected = false;
             square_size = 25;
             grid_size = Board.Width / square_size;
             grid = new square_states[grid_size, grid_size];
@@ -244,8 +250,33 @@ namespace PathFinder
         private void Button_BFS_Click(object sender, EventArgs e)
         {
             BFS_Algorithm = new BFSAlgorithm(this);
-            algorithm_picker = algorithm_picked.BFS;
-            Timer_algorithm_tick.Start();
+            if (weighted_graph_selected)
+            {
+                if (int.TryParse(textBox_StartingNode.Text, out int startNumber) && int.TryParse(textBox_EndingNode.Text, out int endNumber))
+                {
+                    Node startNode = FindNodeByNumber(startNumber);
+                    Node endNode = FindNodeByNumber(endNumber);
+
+                    if (startNode != null && endNode != null)
+                    {
+                        weighted_graph_path = BFS_Algorithm.BFS_for_weighted(startNode, endNode);
+                        Weighted_board.Invalidate();
+                    }
+                    else
+                    {
+                        MessageBox.Show("Please enter valid start and end node numbers.", "Invalid Nodes", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("Please enter valid start and end node numbers.", "Invalid Nodes", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
+            }
+            else 
+            {
+                algorithm_picker = algorithm_picked.BFS;
+                Timer_algorithm_tick.Start();
+            }
         }
 
         /// <summary>
@@ -323,8 +354,33 @@ namespace PathFinder
         private void Button_DFS_Click(object sender, EventArgs e)
         {
             DFS_Algorithm = new DFSAlgorithm(this);
-            algorithm_picker = algorithm_picked.DFS;
-            Timer_algorithm_tick.Start();
+            if (weighted_graph_selected)
+            {
+                if (int.TryParse(textBox_StartingNode.Text, out int startNumber) && int.TryParse(textBox_EndingNode.Text, out int endNumber))
+                {
+                    Node startNode = FindNodeByNumber(startNumber);
+                    Node endNode = FindNodeByNumber(endNumber);
+
+                    if (startNode != null && endNode != null)
+                    {
+                        weighted_graph_path = DFS_Algorithm.DFS_for_weighted(startNode, endNode);
+                        Weighted_board.Invalidate();
+                    }
+                    else
+                    {
+                        MessageBox.Show("Please enter valid start and end node numbers.", "Invalid Nodes", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("Please enter valid start and end node numbers.", "Invalid Nodes", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
+            }
+            else
+            {
+                algorithm_picker = algorithm_picked.DFS;
+                Timer_algorithm_tick.Start();
+            }
         }
 
         /// <summary>
@@ -343,9 +399,35 @@ namespace PathFinder
         /// </summary>
         private void Button_Dijkstra_Click(object sender, EventArgs e)
         {
+
             Dijkstra_Algorithm = new DijkstraAlgorithm(this);
-            algorithm_picker = algorithm_picked.Dijkstra;
-            Timer_algorithm_tick.Start();
+            if (weighted_graph_selected)
+            {
+                if (int.TryParse(textBox_StartingNode.Text, out int startNumber) && int.TryParse(textBox_EndingNode.Text, out int endNumber))
+                {
+                    Node startNode = FindNodeByNumber(startNumber);
+                    Node endNode = FindNodeByNumber(endNumber);
+
+                    if (startNode != null && endNode != null)
+                    {
+                        weighted_graph_path = Dijkstra_Algorithm.Dijkstra_for_weighted(startNode, endNode, nodes);
+                        Weighted_board.Invalidate();
+                    }
+                    else
+                    {
+                        MessageBox.Show("Please enter valid start and end node numbers.", "Invalid Nodes", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("Please enter valid start and end node numbers.", "Invalid Nodes", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
+            }
+            else
+            {
+                algorithm_picker = algorithm_picked.Dijkstra;
+                Timer_algorithm_tick.Start();
+            }
         }
 
         /// <summary>
@@ -354,8 +436,134 @@ namespace PathFinder
         private void Button_AStar_Click(object sender, EventArgs e)
         {
             AStar_Algorithm = new AStarAlgorithm(this);
-            algorithm_picker = algorithm_picked.AStar;
-            Timer_algorithm_tick.Start();
+            if (weighted_graph_selected)
+            {
+                if (int.TryParse(textBox_StartingNode.Text, out int startNumber) && int.TryParse(textBox_EndingNode.Text, out int endNumber))
+                {
+                    Node startNode = FindNodeByNumber(startNumber);
+                    Node endNode = FindNodeByNumber(endNumber);
+
+                    if (startNode != null && endNode != null)
+                    {
+                        weighted_graph_path = AStar_Algorithm.AStar_for_weighted(startNode, endNode, nodes);
+                        Weighted_board.Invalidate();
+                    }
+                    else
+                    {
+                        MessageBox.Show("Please enter valid start and end node numbers.", "Invalid Nodes", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("Please enter valid start and end node numbers.", "Invalid Nodes", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
+            }
+            else
+            {
+                algorithm_picker = algorithm_picked.AStar;
+                Timer_algorithm_tick.Start();
+            }
+        }
+
+        private void Button_add_edge_Click(object sender, EventArgs e)
+        {
+            if (int.TryParse(textBox_From.Text, out int sourceNumber) && int.TryParse(textBox_To.Text, out int targetNumber))
+            {
+                Node sourceNode = FindNodeByNumber(sourceNumber);
+                Node targetNode = FindNodeByNumber(targetNumber);
+
+                if (sourceNode != null && targetNode != null)
+                {
+                    if (int.TryParse(textBox__weight.Text, out int weight))
+                    {
+                        sourceNode.AddEdge(targetNode, weight);
+                        Weighted_board.Invalidate();
+                    }
+                    else
+                    {
+                        MessageBox.Show("Please enter a valid weight.", "Invalid Weight", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("Please enter valid source and target node numbers.", "Invalid Nodes", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
+            }
+            else
+            {
+                MessageBox.Show("Please enter valid source and target node numbers.", "Invalid Nodes", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+        }
+
+        private void Weighted_board_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+            {
+                current_number++;
+                Node node = new Node(e.Location, current_number);
+                nodes.Add(node);
+                Weighted_board.Invalidate();
+            }
+        }
+
+        private void Weighted_board_Paint(object sender, PaintEventArgs e)
+        {
+            foreach (Node node in nodes)
+            {
+                node.Draw(e.Graphics);
+                foreach (Edge edge in node.Edges)
+                {
+                    Color edgeColor = weighted_graph_path.Contains(node) && weighted_graph_path.Contains(edge.Target) ? Color.Red : Color.Black;
+                    using (Pen edgePen = new Pen(edgeColor))
+                    {
+                        e.Graphics.DrawLine(edgePen, node.Location, edge.Target.Location);
+                    }
+                    Point midPoint = new Point((node.Location.X + edge.Target.Location.X) / 2, (node.Location.Y + edge.Target.Location.Y) / 2);
+                    e.Graphics.DrawString(edge.Weight.ToString(), node.NodeNumberFont, node.NodeNumberBrush, midPoint, node.NodeNumberFormat);
+                }
+            }
+        }
+        private Node FindNodeByNumber(int number)
+        {
+            foreach (Node node in nodes)
+            {
+                if (node.Number == number)
+                {
+                    return node;
+                }
+            }
+            return null;
+        }
+
+        private void Button_switch_Click(object sender, EventArgs e)
+        {
+            if (weighted_graph_selected)
+            {
+                weighted_graph_selected = false;
+                Label_switch_state.Text = "Not weighted";
+            }
+            else
+            {
+                weighted_graph_selected = true;
+                Label_switch_state.Text = "Weighted";
+            }
+        }
+
+        private void Button_reset_weighted_Click(object sender, EventArgs e)
+        {
+            nodes.Clear();
+            current_number = 0;
+            weighted_graph_path.Clear();
+            textBox_From.Clear();
+            textBox_To.Clear();
+            textBox__weight.Clear();
+            textBox_StartingNode.Clear();
+            textBox_EndingNode.Clear();
+            Weighted_board.Invalidate();
         }
     }
+
+
+
+
 }

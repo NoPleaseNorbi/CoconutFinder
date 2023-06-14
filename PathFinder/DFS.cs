@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace PathFinder
 {
@@ -139,5 +140,53 @@ namespace PathFinder
             }
             form.Board.Invalidate();
         }
+        public List<Node> DFS_for_weighted(Node startNode, Node endNode)
+        {
+            HashSet<Node> visitedNodes = new HashSet<Node>();
+            Stack<Node> stack = new Stack<Node>();
+            Dictionary<Node, Node> previousNodes = new Dictionary<Node, Node>();
+
+            stack.Push(startNode);
+            visitedNodes.Add(startNode);
+
+            while (stack.Count > 0)
+            {
+                Node currentNode = stack.Pop();
+
+                if (currentNode == endNode)
+                {
+                    break;
+                }
+
+                foreach (Edge edge in currentNode.Edges)
+                {
+                    Node neighborNode = edge.Target;
+
+                    if (!visitedNodes.Contains(neighborNode))
+                    {
+                        stack.Push(neighborNode);
+                        visitedNodes.Add(neighborNode);
+                        previousNodes[neighborNode] = currentNode;
+                    }
+                }
+            }
+
+            List<Node> shortestPath = new List<Node>();
+            Node backtrackNode = endNode;
+
+            while (backtrackNode != null)
+            {
+                shortestPath.Insert(0, backtrackNode);
+                backtrackNode = previousNodes.ContainsKey(backtrackNode) ? previousNodes[backtrackNode] : null;
+            }
+
+            if (shortestPath.Count == 1)
+            {
+                MessageBox.Show("Didn't find a path", "Invalid Nodes", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+            return shortestPath;
+        }
+
+
     }
 }
