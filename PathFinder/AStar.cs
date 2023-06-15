@@ -164,86 +164,93 @@ namespace PathFinder
             return finished;
         }
 
-        public List<Node> AStar_for_weighted(Node startNode, Node endNode, List<Node> nodes)
+        /// <summary>
+        /// Constructs the Astar algorithm for the weighted graph
+        /// </summary>
+        /// <param name="starting_node">The starting node</param>
+        /// <param name="ending_node">The ending node</param>
+        /// <param name="nodes">All the nodes in the graph</param>
+        /// <returns>The list of nodes present in the path</returns>
+        public List<Node> AStar_for_weighted(Node starting_node, Node ending_node, List<Node> nodes)
         {
             Dictionary<Node, int> distances = new Dictionary<Node, int>();
-            Dictionary<Node, Node> previousNodes = new Dictionary<Node, Node>();
-            HashSet<Node> visitedNodes = new HashSet<Node>();
-            HashSet<Node> unvisitedNodes = new HashSet<Node>(nodes);
+            Dictionary<Node, Node> prev_nodes = new Dictionary<Node, Node>();
+            HashSet<Node> visited = new HashSet<Node>();
+            HashSet<Node> unvisited = new HashSet<Node>(nodes);
 
-            foreach (Node node in unvisitedNodes)
+            foreach (Node node in unvisited)
             {
                 distances[node] = int.MaxValue;
             }
 
-            distances[startNode] = 0;
+            distances[starting_node] = 0;
 
-            while (unvisitedNodes.Count > 0)
+            while (unvisited.Count > 0)
             {
-                Node currentNode = GetClosestNode_for_weighted(distances, unvisitedNodes);
+                Node curr_node = GetClosestNode_for_weighted(distances, unvisited);
 
-                if (currentNode == endNode)
+                if (curr_node == ending_node)
                 {
                     break;
                 }
 
-                unvisitedNodes.Remove(currentNode);
-                visitedNodes.Add(currentNode);
+                unvisited.Remove(curr_node);
+                visited.Add(curr_node);
 
-                if (currentNode.Edges.Count == 0) 
+                if (curr_node.Edges.Count == 0) 
                 {
                     break;                
                 }
-                foreach (Edge edge in currentNode.Edges)
+                foreach (Edge edge in curr_node.Edges)
                 {
-                    Node neighborNode = edge.Target;
+                    Node neighbour = edge.Target;
 
-                    if (visitedNodes.Contains(neighborNode))
+                    if (visited.Contains(neighbour))
                     {
                         continue;
                     }
 
-                    int distance = distances[currentNode] + edge.Weight;
+                    int distance = distances[curr_node] + edge.Weight;
 
-                    if (distance < distances[neighborNode])
+                    if (distance < distances[neighbour])
                     {
-                        distances[neighborNode] = distance;
-                        previousNodes[neighborNode] = currentNode;
+                        distances[neighbour] = distance;
+                        prev_nodes[neighbour] = curr_node;
                     }
                 }
             }
 
-            List<Node> shortestPath = new List<Node>();
-            Node backtrackNode = endNode;
+            List<Node> path = new List<Node>();
+            Node backtrack = ending_node;
 
-            while (backtrackNode != null)
+            while (backtrack != null)
             {
-                shortestPath.Insert(0, backtrackNode);
-                backtrackNode = previousNodes.ContainsKey(backtrackNode) ? previousNodes[backtrackNode] : null;
+                path.Insert(0, backtrack);
+                backtrack = prev_nodes.ContainsKey(backtrack) ? prev_nodes[backtrack] : null;
             }
 
-            if (shortestPath.Count == 1)
+            if (path.Count == 1)
             {
                 MessageBox.Show("Didn't find a path", "Invalid Nodes", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
-            return shortestPath;
+            return path;
         }
 
         private Node GetClosestNode_for_weighted(Dictionary<Node, int> distances, HashSet<Node> unvisitedNodes)
         {
-            int minDistance = int.MaxValue;
-            Node closestNode = null;
+            int min_dist = int.MaxValue;
+            Node closest_node = null;
 
             foreach (Node node in unvisitedNodes)
             {
-                if (distances[node] < minDistance)
+                if (distances[node] < min_dist)
                 {
-                    minDistance = distances[node];
-                    closestNode = node;
+                    min_dist = distances[node];
+                    closest_node = node;
                 }
             }
 
-            return closestNode;
+            return closest_node;
         }
 
     }

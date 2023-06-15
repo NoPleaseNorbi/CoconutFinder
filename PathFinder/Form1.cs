@@ -254,12 +254,12 @@ namespace PathFinder
             {
                 if (int.TryParse(textBox_StartingNode.Text, out int startNumber) && int.TryParse(textBox_EndingNode.Text, out int endNumber))
                 {
-                    Node startNode = FindNodeByNumber(startNumber);
-                    Node endNode = FindNodeByNumber(endNumber);
+                    Node starting_node = FindNodeByNumber(startNumber);
+                    Node ending_node = FindNodeByNumber(endNumber);
 
-                    if (startNode != null && endNode != null)
+                    if (starting_node != null && ending_node != null)
                     {
-                        weighted_graph_path = BFS_Algorithm.BFS_for_weighted(startNode, endNode);
+                        weighted_graph_path = BFS_Algorithm.BFS_for_weighted(starting_node, ending_node);
                         Weighted_board.Invalidate();
                     }
                     else
@@ -358,12 +358,12 @@ namespace PathFinder
             {
                 if (int.TryParse(textBox_StartingNode.Text, out int startNumber) && int.TryParse(textBox_EndingNode.Text, out int endNumber))
                 {
-                    Node startNode = FindNodeByNumber(startNumber);
-                    Node endNode = FindNodeByNumber(endNumber);
+                    Node starting_node = FindNodeByNumber(startNumber);
+                    Node ending_node = FindNodeByNumber(endNumber);
 
-                    if (startNode != null && endNode != null)
+                    if (starting_node != null && ending_node != null)
                     {
-                        weighted_graph_path = DFS_Algorithm.DFS_for_weighted(startNode, endNode);
+                        weighted_graph_path = DFS_Algorithm.DFS_for_weighted(starting_node, ending_node);
                         Weighted_board.Invalidate();
                     }
                     else
@@ -405,12 +405,12 @@ namespace PathFinder
             {
                 if (int.TryParse(textBox_StartingNode.Text, out int startNumber) && int.TryParse(textBox_EndingNode.Text, out int endNumber))
                 {
-                    Node startNode = FindNodeByNumber(startNumber);
-                    Node endNode = FindNodeByNumber(endNumber);
+                    Node starting_node = FindNodeByNumber(startNumber);
+                    Node ending_node = FindNodeByNumber(endNumber);
 
-                    if (startNode != null && endNode != null)
+                    if (starting_node != null && ending_node != null)
                     {
-                        weighted_graph_path = Dijkstra_Algorithm.Dijkstra_for_weighted(startNode, endNode, nodes);
+                        weighted_graph_path = Dijkstra_Algorithm.Dijkstra_for_weighted(starting_node, ending_node, nodes);
                         Weighted_board.Invalidate();
                     }
                     else
@@ -440,12 +440,12 @@ namespace PathFinder
             {
                 if (int.TryParse(textBox_StartingNode.Text, out int startNumber) && int.TryParse(textBox_EndingNode.Text, out int endNumber))
                 {
-                    Node startNode = FindNodeByNumber(startNumber);
-                    Node endNode = FindNodeByNumber(endNumber);
+                    Node starting_node = FindNodeByNumber(startNumber);
+                    Node ending_node = FindNodeByNumber(endNumber);
 
-                    if (startNode != null && endNode != null)
+                    if (starting_node != null && ending_node != null)
                     {
-                        weighted_graph_path = AStar_Algorithm.AStar_for_weighted(startNode, endNode, nodes);
+                        weighted_graph_path = AStar_Algorithm.AStar_for_weighted(starting_node, ending_node, nodes);
                         Weighted_board.Invalidate();
                     }
                     else
@@ -465,18 +465,22 @@ namespace PathFinder
             }
         }
 
+        /// <summary>
+        /// Adds an edge between the two specified nodes and adds a wiehgt to them
+        /// </summary>
         private void Button_add_edge_Click(object sender, EventArgs e)
         {
-            if (int.TryParse(textBox_From.Text, out int sourceNumber) && int.TryParse(textBox_To.Text, out int targetNumber))
+            if (int.TryParse(textBox_From.Text, out int source_num) && int.TryParse(textBox_To.Text, out int target_num))
             {
-                Node sourceNode = FindNodeByNumber(sourceNumber);
-                Node targetNode = FindNodeByNumber(targetNumber);
+                Node source_node = FindNodeByNumber(source_num);
+                Node target_node = FindNodeByNumber(target_num);
 
-                if (sourceNode != null && targetNode != null)
+                if (source_node != null && target_node != null)
                 {
                     if (int.TryParse(textBox__weight.Text, out int weight))
                     {
-                        sourceNode.AddEdge(targetNode, weight);
+                        source_node.AddEdge(target_node, weight);
+                        target_node.AddEdge(source_node, weight);
                         Weighted_board.Invalidate();
                     }
                     else
@@ -495,6 +499,9 @@ namespace PathFinder
             }
         }
 
+        /// <summary>
+        /// Adds a node to tohe board
+        /// </summary>
         private void Weighted_board_MouseDown(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Left)
@@ -506,6 +513,9 @@ namespace PathFinder
             }
         }
 
+        /// <summary>
+        /// Paints the board according to the user specified input
+        /// </summary>
         private void Weighted_board_Paint(object sender, PaintEventArgs e)
         {
             foreach (Node node in nodes)
@@ -513,16 +523,22 @@ namespace PathFinder
                 node.Draw(e.Graphics);
                 foreach (Edge edge in node.Edges)
                 {
-                    Color edgeColor = weighted_graph_path.Contains(node) && weighted_graph_path.Contains(edge.Target) ? Color.Red : Color.Black;
-                    using (Pen edgePen = new Pen(edgeColor))
+                    Color edge_color = weighted_graph_path.Contains(node) && weighted_graph_path.Contains(edge.Target) ? Color.Yellow : Color.Black;
+                    using (Pen edge_pen = new Pen(edge_color))
                     {
-                        e.Graphics.DrawLine(edgePen, node.Location, edge.Target.Location);
+                        e.Graphics.DrawLine(edge_pen, node.Location, edge.Target.Location);
                     }
-                    Point midPoint = new Point((node.Location.X + edge.Target.Location.X) / 2, (node.Location.Y + edge.Target.Location.Y) / 2);
-                    e.Graphics.DrawString(edge.Weight.ToString(), node.NodeNumberFont, node.NodeNumberBrush, midPoint, node.NodeNumberFormat);
+                    Point mid_point = new Point((node.Location.X + edge.Target.Location.X) / 2, (node.Location.Y + edge.Target.Location.Y) / 2);
+                    e.Graphics.DrawString(edge.Weight.ToString(), node.node_number_font, node.node_number_brush, mid_point, node.node_number_format);
                 }
             }
         }
+
+        /// <summary>
+        /// Function for finding the node behind the number specified
+        /// </summary>
+        /// <param name="number"></param>
+        /// <returns>the node found</returns>
         private Node FindNodeByNumber(int number)
         {
             foreach (Node node in nodes)
@@ -534,6 +550,10 @@ namespace PathFinder
             }
             return null;
         }
+
+        /// <summary>
+        /// Specifies which algorithm should the program use
+        /// </summary>
 
         private void Button_switch_Click(object sender, EventArgs e)
         {
@@ -549,6 +569,9 @@ namespace PathFinder
             }
         }
 
+        /// <summary>
+        /// Resets the  unweighted graph
+        /// </summary>
         private void Button_reset_weighted_Click(object sender, EventArgs e)
         {
             nodes.Clear();

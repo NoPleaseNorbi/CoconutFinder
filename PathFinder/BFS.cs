@@ -136,52 +136,58 @@ namespace PathFinder
             form.Board.Invalidate();
         }
 
-        public List<Node> BFS_for_weighted(Node startNode, Node endNode)
+        /// <summary>
+        /// Constructs the BFS algorithm for the weighted graph
+        /// </summary>
+        /// <param name="starting_node">The starting node</param>
+        /// <param name="ending_node">The ending node</param>
+        /// <returns>The list of nodes present in the path</returns>
+        public List<Node> BFS_for_weighted(Node starting_node, Node ending_node)
         {
-            Dictionary<Node, Node> previousNodes = new Dictionary<Node, Node>();
+            Dictionary<Node, Node> prev_nodes = new Dictionary<Node, Node>();
             Queue<Node> queue = new Queue<Node>();
-            HashSet<Node> visitedNodes = new HashSet<Node>();
+            HashSet<Node> visited = new HashSet<Node>();
 
-            queue.Enqueue(startNode);
-            visitedNodes.Add(startNode);
+            queue.Enqueue(starting_node);
+            visited.Add(starting_node);
 
             while (queue.Count > 0)
             {
-                Node currentNode = queue.Dequeue();
+                Node curr_node = queue.Dequeue();
 
-                if (currentNode == endNode)
+                if (curr_node == ending_node)
                 {
                     break;
                 }
 
-                foreach (Edge edge in currentNode.Edges)
+                foreach (Edge edge in curr_node.Edges)
                 {
-                    Node neighborNode = edge.Target;
+                    Node neighbor_node = edge.Target;
 
-                    if (!visitedNodes.Contains(neighborNode))
+                    if (!visited.Contains(neighbor_node))
                     {
-                        queue.Enqueue(neighborNode);
-                        visitedNodes.Add(neighborNode);
-                        previousNodes[neighborNode] = currentNode;
+                        queue.Enqueue(neighbor_node);
+                        visited.Add(neighbor_node);
+                        prev_nodes[neighbor_node] = curr_node;
                     }
                     
                 }
             }
 
-            List<Node> shortestPath = new List<Node>();
-            Node backtrackNode = endNode;
+            List<Node> path = new List<Node>();
+            Node backtrack = ending_node;
 
-            while (backtrackNode != null)
+            while (backtrack != null)
             {
-                shortestPath.Insert(0, backtrackNode);
-                backtrackNode = previousNodes.ContainsKey(backtrackNode) ? previousNodes[backtrackNode] : null;
+                path.Insert(0, backtrack);
+                backtrack = prev_nodes.ContainsKey(backtrack) ? prev_nodes[backtrack] : null;
             }
 
-            if (shortestPath.Count == 1) 
+            if (path.Count == 1) 
             {
                 MessageBox.Show("Didn't find a path", "Invalid Nodes", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
-            return shortestPath;
+            return path;
         }
 
     }
