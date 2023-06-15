@@ -147,11 +147,11 @@ namespace PathFinder
         /// <param name="starting_node">The starting node</param>
         /// <param name="ending_node">The ending node</param>
         /// <returns>The list of nodes present in the path</returns>
-        public List<Node> DFS_for_weighted(Node starting_node, Node ending_node)
+        public List<Edge> DFS_for_weighted(Node starting_node, Node ending_node)
         {
-            HashSet<Node> visited = new HashSet<Node>();
-            Stack<Node> stack = new Stack<Node>();
             Dictionary<Node, Node> prev_nodes = new Dictionary<Node, Node>();
+            Stack<Node> stack = new Stack<Node>();
+            HashSet<Node> visited = new HashSet<Node>();
 
             stack.Push(starting_node);
             visited.Add(starting_node);
@@ -178,20 +178,43 @@ namespace PathFinder
                 }
             }
 
-            List<Node> path = new List<Node>();
+            List<Edge> path = new List<Edge>();
             Node backtrack = ending_node;
 
             while (backtrack != null)
             {
-                path.Insert(0, backtrack);
-                backtrack = prev_nodes.ContainsKey(backtrack) ? prev_nodes[backtrack] : null;
+                Node prev_node;
+                if (prev_nodes.TryGetValue(backtrack, out prev_node))
+                {
+                    Edge edge = GetEdgeBetweenNodes(prev_node, backtrack);
+                    if (edge != null)
+                    {
+                        path.Insert(0, edge);
+                    }
+                }
+
+                backtrack = prev_node;
             }
 
-            if (path.Count == 1)
+            if (path.Count == 0)
             {
                 MessageBox.Show("Didn't find a path", "Invalid Nodes", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
+
             return path;
+        }
+
+        private Edge GetEdgeBetweenNodes(Node source, Node target)
+        {
+            foreach (Edge edge in source.Edges)
+            {
+                if (edge.Target == target)
+                {
+                    return edge;
+                }
+            }
+
+            return null;
         }
 
 

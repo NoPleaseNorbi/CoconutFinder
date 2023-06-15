@@ -171,7 +171,7 @@ namespace PathFinder
         /// <param name="ending_node">The ending node</param>
         /// <param name="nodes">All the nodes in the graph</param>
         /// <returns>The list of nodes present in the path</returns>
-        public List<Node> AStar_for_weighted(Node starting_node, Node ending_node, List<Node> nodes)
+        public List<Edge> AStar_for_weighted(Node starting_node, Node ending_node, List<Node> nodes)
         {
             Dictionary<Node, int> distances = new Dictionary<Node, int>();
             Dictionary<Node, Node> prev_nodes = new Dictionary<Node, Node>();
@@ -199,7 +199,7 @@ namespace PathFinder
 
                 if (curr_node.Edges.Count == 0) 
                 {
-                    break;                
+                    break;
                 }
                 foreach (Edge edge in curr_node.Edges)
                 {
@@ -220,20 +220,43 @@ namespace PathFinder
                 }
             }
 
-            List<Node> path = new List<Node>();
+            List<Edge> path = new List<Edge>();
             Node backtrack = ending_node;
 
             while (backtrack != null)
             {
-                path.Insert(0, backtrack);
-                backtrack = prev_nodes.ContainsKey(backtrack) ? prev_nodes[backtrack] : null;
+                Node prev_node;
+                if (prev_nodes.TryGetValue(backtrack, out prev_node))
+                {
+                    Edge edge = GetEdgeBetweenNodes_for_weighted(prev_node, backtrack);
+                    if (edge != null)
+                    {
+                        path.Insert(0, edge);
+                    }
+                }
+
+                backtrack = prev_node;
             }
 
-            if (path.Count == 1)
+            if (path.Count == 0)
             {
                 MessageBox.Show("Didn't find a path", "Invalid Nodes", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
+
             return path;
+        }
+
+        private Edge GetEdgeBetweenNodes_for_weighted(Node source, Node target)
+        {
+            foreach (Edge edge in source.Edges)
+            {
+                if (edge.Target == target)
+                {
+                    return edge;
+                }
+            }
+
+            return null;
         }
 
         private Node GetClosestNode_for_weighted(Dictionary<Node, int> distances, HashSet<Node> unvisitedNodes)
@@ -252,6 +275,9 @@ namespace PathFinder
 
             return closest_node;
         }
+
+
+
 
     }
 }

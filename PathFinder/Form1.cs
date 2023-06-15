@@ -89,6 +89,9 @@ namespace PathFinder
         private List<Node> nodes = new List<Node>();
         public bool weighted_graph_selected;
         private List<Node> weighted_graph_path = new List<Node>();
+        private List<Edge> weighted_graph_path_edges = new List<Edge>();
+        Node starting_node;
+        Node ending_node;
         /// <summary>
         /// The constructor of our form
         /// </summary>
@@ -254,12 +257,12 @@ namespace PathFinder
             {
                 if (int.TryParse(textBox_StartingNode.Text, out int startNumber) && int.TryParse(textBox_EndingNode.Text, out int endNumber))
                 {
-                    Node starting_node = FindNodeByNumber(startNumber);
-                    Node ending_node = FindNodeByNumber(endNumber);
+                    starting_node = FindNodeByNumber(startNumber);
+                    ending_node = FindNodeByNumber(endNumber);
 
                     if (starting_node != null && ending_node != null)
                     {
-                        weighted_graph_path = BFS_Algorithm.BFS_for_weighted(starting_node, ending_node);
+                        weighted_graph_path_edges = BFS_Algorithm.BFS_for_weighted(starting_node, ending_node);
                         Weighted_board.Invalidate();
                     }
                     else
@@ -358,12 +361,12 @@ namespace PathFinder
             {
                 if (int.TryParse(textBox_StartingNode.Text, out int startNumber) && int.TryParse(textBox_EndingNode.Text, out int endNumber))
                 {
-                    Node starting_node = FindNodeByNumber(startNumber);
-                    Node ending_node = FindNodeByNumber(endNumber);
+                    starting_node = FindNodeByNumber(startNumber);
+                    ending_node = FindNodeByNumber(endNumber);
 
                     if (starting_node != null && ending_node != null)
                     {
-                        weighted_graph_path = DFS_Algorithm.DFS_for_weighted(starting_node, ending_node);
+                        weighted_graph_path_edges = DFS_Algorithm.DFS_for_weighted(starting_node, ending_node);
                         Weighted_board.Invalidate();
                     }
                     else
@@ -405,12 +408,12 @@ namespace PathFinder
             {
                 if (int.TryParse(textBox_StartingNode.Text, out int startNumber) && int.TryParse(textBox_EndingNode.Text, out int endNumber))
                 {
-                    Node starting_node = FindNodeByNumber(startNumber);
-                    Node ending_node = FindNodeByNumber(endNumber);
+                    starting_node = FindNodeByNumber(startNumber);
+                    ending_node = FindNodeByNumber(endNumber);
 
                     if (starting_node != null && ending_node != null)
                     {
-                        weighted_graph_path = Dijkstra_Algorithm.Dijkstra_for_weighted(starting_node, ending_node, nodes);
+                        weighted_graph_path_edges = Dijkstra_Algorithm.Dijkstra_for_weighted(starting_node, ending_node, nodes);
                         Weighted_board.Invalidate();
                     }
                     else
@@ -440,12 +443,12 @@ namespace PathFinder
             {
                 if (int.TryParse(textBox_StartingNode.Text, out int startNumber) && int.TryParse(textBox_EndingNode.Text, out int endNumber))
                 {
-                    Node starting_node = FindNodeByNumber(startNumber);
-                    Node ending_node = FindNodeByNumber(endNumber);
+                    starting_node = FindNodeByNumber(startNumber);
+                    ending_node = FindNodeByNumber(endNumber);
 
                     if (starting_node != null && ending_node != null)
                     {
-                        weighted_graph_path = AStar_Algorithm.AStar_for_weighted(starting_node, ending_node, nodes);
+                        weighted_graph_path_edges = AStar_Algorithm.AStar_for_weighted(starting_node, ending_node, nodes);
                         Weighted_board.Invalidate();
                     }
                     else
@@ -518,20 +521,49 @@ namespace PathFinder
         /// </summary>
         private void Weighted_board_Paint(object sender, PaintEventArgs e)
         {
+            Dictionary<Edge, Node> not_in_path = new Dictionary<Edge, Node>();
+            Dictionary<Edge, Node> in_path = new Dictionary<Edge, Node>();
             foreach (Node node in nodes)
             {
                 node.Draw(e.Graphics);
+
                 foreach (Edge edge in node.Edges)
                 {
-                    Color edge_color = weighted_graph_path.Contains(node) && weighted_graph_path.Contains(edge.Target) ? Color.Yellow : Color.Black;
-                    using (Pen edge_pen = new Pen(edge_color))
+                    if (!weighted_graph_path_edges.Contains(edge))
                     {
-                        e.Graphics.DrawLine(edge_pen, node.Location, edge.Target.Location);
+                        not_in_path.Add(edge, node);
+                        
                     }
+                    else
+                    {
+                        in_path.Add(edge, node);
+                        using (Pen yellow_pen = new Pen(Color.Yellow))
+                        {
+                            e.Graphics.DrawLine(yellow_pen, node.Location, edge.Target.Location);
+                        }
+                    }
+
+                    // Draw edge weights
                     Point mid_point = new Point((node.Location.X + edge.Target.Location.X) / 2, (node.Location.Y + edge.Target.Location.Y) / 2);
                     e.Graphics.DrawString(edge.Weight.ToString(), node.node_number_font, node.node_number_brush, mid_point, node.node_number_format);
                 }
             }
+
+            foreach (KeyValuePair<Edge, Node> pair in not_in_path) {
+                using (Pen black_pen = new Pen(Color.Black))
+                {
+                    e.Graphics.DrawLine(black_pen, pair.Value.Location, pair.Key.Target.Location);
+                }
+            }
+
+            foreach (KeyValuePair<Edge, Node> pair in in_path)
+            {
+                using (Pen black_pen = new Pen(Color.Yellow))
+                {
+                    e.Graphics.DrawLine(black_pen, pair.Value.Location, pair.Key.Target.Location);
+                }
+            }
+
         }
 
         /// <summary>

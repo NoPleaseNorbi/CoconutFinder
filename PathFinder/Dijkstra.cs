@@ -153,16 +153,16 @@ namespace PathFinder
         }
 
         /// <summary>
-        /// Constructs Dijkstra's algorithm for the weighted graph
+        /// Constructs Dijkstras's algorithm for the weighted graph
         /// </summary>
         /// <param name="starting_node">The starting node</param>
         /// <param name="ending_node">The ending node</param>
         /// <param name="nodes">All of the nodes present in the graph</param>
         /// <returns>The list of nodes present in the path</returns>
-        public List<Node> Dijkstra_for_weighted(Node starting_node, Node ending_node, List<Node> nodes)
+        public List<Edge> Dijkstra_for_weighted(Node startingNode, Node endingNode, List<Node> nodes)
         {
             Dictionary<Node, int> distances = new Dictionary<Node, int>();
-            Dictionary<Node, Node> prev_nodes = new Dictionary<Node, Node>();
+            Dictionary<Node, Node> prevNodes = new Dictionary<Node, Node>();
             List<Node> unvisited = new List<Node>(nodes);
 
             foreach (Node node in unvisited)
@@ -170,45 +170,52 @@ namespace PathFinder
                 distances[node] = int.MaxValue;
             }
 
-            distances[starting_node] = 0;
+            distances[startingNode] = 0;
 
             while (unvisited.Count > 0)
             {
-                Node curr_node = unvisited.OrderBy(node => distances[node]).First();
+                Node currNode = unvisited.OrderBy(node => distances[node]).First();
 
-                if (curr_node == ending_node)
+                if (currNode == endingNode)
                 {
                     break;
                 }
 
-                unvisited.Remove(curr_node);
+                unvisited.Remove(currNode);
 
-                foreach (Edge edge in curr_node.Edges)
+                foreach (Edge edge in currNode.Edges)
                 {
-                    int distance = distances[curr_node] + edge.Weight;
+                    int distance = distances[currNode] + edge.Weight;
 
                     if (distance < distances[edge.Target])
                     {
                         distances[edge.Target] = distance;
-                        prev_nodes[edge.Target] = curr_node;
+                        prevNodes[edge.Target] = currNode;
                     }
                 }
             }
 
-            List<Node> path = new List<Node>();
-            Node backtrack = ending_node;
+            List<Edge> path = new List<Edge>();
+            Node backtrack = endingNode;
 
-            while (backtrack != null)
+            while (backtrack != null && prevNodes.ContainsKey(backtrack))
             {
-                path.Insert(0, backtrack);
-                backtrack = prev_nodes.ContainsKey(backtrack) ? prev_nodes[backtrack] : null;
+                Node prevNode = prevNodes[backtrack];
+                Edge edge = prevNode.Edges.FirstOrDefault(e => e.Target == backtrack);
+                if (edge != null)
+                {
+                    path.Insert(0, edge);
+                }
+                backtrack = prevNode;
             }
 
-            if (path.Count == 1)
+            if (path.Count == 0)
             {
                 MessageBox.Show("Didn't find a path", "Invalid Nodes", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
             return path;
         }
+
+
     }
 }
