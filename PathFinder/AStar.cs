@@ -197,6 +197,10 @@ namespace PathFinder
                 unvisited.Remove(curr_node);
                 visited.Add(curr_node);
 
+                if (curr_node == null) 
+                {
+                    break;
+                }
                 if (curr_node.Edges.Count == 0) 
                 {
                     break;
