@@ -617,8 +617,4 @@ namespace PathFinder
             Weighted_board.Invalidate();
         }
     }
-
-
-
-
 }
